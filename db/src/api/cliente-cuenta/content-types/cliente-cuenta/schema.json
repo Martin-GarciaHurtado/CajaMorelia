@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cliente_cuentas",
+  "info": {
+    "singularName": "cliente-cuenta",
+    "pluralName": "cliente-cuentas",
+    "displayName": "cliente_cuenta",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "saldo_actual": {
+      "type": "decimal"
+    },
+    "fecha_contratacion": {
+      "type": "date"
+    },
+    "fecha_ultimo_movimiento": {
+      "type": "datetime"
+    },
+    "cliente": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::cliente.cliente",
+      "inversedBy": "cliente_cuenta"
+    },
+    "tipo_cuenta": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::tipo-cuenta.tipo-cuenta",
+      "inversedBy": "cliente_cuenta"
+    }
+  }
+}

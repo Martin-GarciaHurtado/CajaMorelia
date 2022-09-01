@@ -319,17 +319,38 @@
     methods: {
       Info(id){
         this.info = true,
-        this.nombre = this.clientes.data[id-1].attributes.nombre,
-        this.apellido_paterno = this.clientes.data[id-1].attributes.apellido_paterno,
-        this.apellido_materno = this.clientes.data[id-1].attributes.apellido_materno,
-        this.rfc = this.clientes.data[id-1].attributes.rfc,
-        this.curp = this.clientes.data[id-1].attributes.curp
-        this.saldo_actual = this.cuenta.data[id-1].attributes.saldo_actual,
-        this.fecha_contratacion = this.cuenta.data[id-1].attributes.createdAt,
-        this.fecha_ultimo_movimiento = this.cuenta.data[id-1].attributes.updatedAt,
-        this.nombre_cuenta = this.tipoCuenta.data[id-1].attributes.nombre_cuenta
-        console.log(this.clientes.data[id-1].attributes.nombre)
-        console.log(id)
+        axios.get( 'http://localhost:1337/api/clientes/'+id)
+        .then( res => {
+          this.clientes = res.data,
+          this.nombre = this.clientes.data.attributes.nombre,
+          this.apellido_paterno = this.clientes.data.attributes.apellido_paterno,
+          this.apellido_materno = this.clientes.data.attributes.apellido_materno,
+          this.rfc = this.clientes.data.attributes.rfc,
+          this.curp = this.clientes.data.attributes.curp
+          this.InfoCuenta(id);
+        })
+        .catch( e => console.log(e))
+        //console.log(id)
+      },
+      InfoCuenta(id) {
+        axios.get( 'http://localhost:1337/api/cliente-cuentas/'+id )
+        .then( res => {
+          this.cuenta = res.data
+          this.saldo_actual = this.cuenta.data.attributes.saldo_actual,
+          this.fecha_contratacion = this.cuenta.data.attributes.createdAt,
+          this.fecha_ultimo_movimiento = this.cuenta.data.attributes.updatedAt
+          this.InfoTipoCuenta(id);
+        })
+        .catch( e => console.log(e))
+      },
+      InfoTipoCuenta(id) {
+        axios.get( 'http://localhost:1337/api/tipo-cuentas/'+id )
+        .then( res => {
+          this.tipoCuenta = res.data
+          this.nombre_cuenta = this.tipoCuenta.data.attributes.nombre_cuenta
+          //this.VacioCampos();
+        })
+        .catch( e => console.log(e))
       },
       get_Clientes(){
         axios.get( 'http://localhost:1337/api/clientes' ).then( res => {
@@ -358,16 +379,19 @@
       },
       Update(id){
         this.editar = true
-        this.nombre = this.clientes.data[id-1].attributes.nombre,
-        this.apellido_paterno = this.clientes.data[id-1].attributes.apellido_paterno,
-        this.apellido_materno = this.clientes.data[id-1].attributes.apellido_materno,
-        this.rfc = this.clientes.data[id-1].attributes.rfc,
-        this.curp = this.clientes.data[id-1].attributes.curp
-        this.saldo_actual = this.cuenta.data[id-1].attributes.saldo_actual,
-        this.fecha_contratacion = this.cuenta.data[id-1].attributes.createdAt,
-        this.fecha_ultimo_movimiento = this.cuenta.data[id-1].attributes.updatedAt,
-        this.nombre_cuenta = this.tipoCuenta.data[id-1].attributes.nombre_cuenta,
+        axios.get( 'http://localhost:1337/api/clientes/'+id)
+        .then( res => {
+          this.clientes = res.data,
+          this.nombre = this.clientes.data.attributes.nombre,
+          this.apellido_paterno = this.clientes.data.attributes.apellido_paterno,
+          this.apellido_materno = this.clientes.data.attributes.apellido_materno,
+          this.rfc = this.clientes.data.attributes.rfc,
+          this.curp = this.clientes.data.attributes.curp
+          this.InfoCuenta(id);
+        })
+        .catch( e => console.log(e))
         this.index = id
+        console.log(this.index)
       },
       async EditadoCliente() {
         await axios.put( 'http://localhost:1337/api/clientes/'+this.index, { 

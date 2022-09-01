@@ -18,7 +18,7 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::cliente-cuenta.cliente-cuenta",
-      "inversedBy": "tipo_cuenta"
+      "mappedBy": "tipo_cuenta"
     }
   }
 }

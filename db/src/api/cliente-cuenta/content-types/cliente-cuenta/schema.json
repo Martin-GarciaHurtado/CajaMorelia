@@ -15,12 +15,6 @@
     "saldo_actual": {
       "type": "decimal"
     },
-    "fecha_contratacion": {
-      "type": "date"
-    },
-    "fecha_ultimo_movimiento": {
-      "type": "datetime"
-    },
     "cliente": {
       "type": "relation",
       "relation": "oneToOne",

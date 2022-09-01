@@ -201,12 +201,12 @@
             <v-spacer></v-spacer>
             <v-icon>mdi-account</v-icon>
             <v-spacer></v-spacer>
-            <v-btn color="indigo darken-4" text @click="agregar = false"><v-icon>mdi-close</v-icon></v-btn>
+            <v-btn color="indigo darken-4" text @click="editar = false"><v-icon>mdi-close</v-icon></v-btn>
           </v-card-actions>
             <v-divider></v-divider>
               <v-card-text>
                 <v-container>
-                  <v-form id="form" @submit.prevent="RegistroCliente">
+                  <v-form id="form" @submit.prevent="EditadoCliente">
                     <v-row>
                       <v-col cols="12" sm="6" md="6" class="text-center">
                         <v-text-field
@@ -275,7 +275,7 @@
               </v-card-text>
           <v-card-actions >
             <v-spacer></v-spacer>
-            <v-btn rounded color="#0a3356" dark type="submit" @click="RegistroCliente">
+            <v-btn rounded color="#0a3356" dark type="submit" @click="EditadoCliente">
               <v-icon>mdi-account-check</v-icon>
               Editar Usuario
             </v-btn>
@@ -328,13 +328,13 @@
         this.fecha_contratacion = this.cuenta.data[id-1].attributes.createdAt,
         this.fecha_ultimo_movimiento = this.cuenta.data[id-1].attributes.updatedAt,
         this.nombre_cuenta = this.tipoCuenta.data[id-1].attributes.nombre_cuenta
-        //console.log()
+        console.log(this.clientes.data[id-1].attributes.nombre)
         console.log(id)
       },
       get_Clientes(){
         axios.get( 'http://localhost:1337/api/clientes' ).then( res => {
-          console.log(res.data)
           this.clientes = res.data
+          console.log(this.clientes)
         })
         .catch( e => {
           console.log(e)
@@ -342,7 +342,6 @@
       },
       get_Cuenta(){
         axios.get( 'http://localhost:1337/api/cliente-cuentas' ).then( res => {
-          console.log(res.data)
           this.cuenta = res.data
         })
         .catch( e => {
@@ -351,7 +350,6 @@
       },
       get_TipoCuenta(){
         axios.get( 'http://localhost:1337/api/tipo-cuentas' ).then( res => {
-          console.log(res.data)
           this.tipoCuenta = res.data
         })
         .catch( e => {
@@ -370,18 +368,62 @@
         this.fecha_ultimo_movimiento = this.cuenta.data[id-1].attributes.updatedAt,
         this.nombre_cuenta = this.tipoCuenta.data[id-1].attributes.nombre_cuenta,
         this.index = id
-        this.Editado(this.index);
       },
-      async Editado(id) {
-        await axios.put( 'http://localhost:1337/api/clientes/'+id).then( () => {
+      async EditadoCliente() {
+        await axios.put( 'http://localhost:1337/api/clientes/'+this.index, { 
+          data: {
+            nombre: this.nombre,
+            apellido_paterno: this.apellido_paterno,
+            apellido_materno: this.apellido_materno,
+            rfc: this.rfc,
+            curp: this.curp
+          }
+        }).then( () => {
           console.log("Editado con exito")
-          location.reload();
+          this.EditadoCuenta(this.index);
         })
         .catch( e => console.log(e))
+      },
+      async EditadoCuenta(id) {
+        await axios.put( 'http://localhost:1337/api/cliente-cuentas/'+id,{
+        data: {
+          saldo_actual: this.saldo_actual,
+        }
+      }).then( () => {
+        console.log("funciona bien cuenta")
+        this.EditadoTipoCuenta(id);
+      })
+      .catch( e => console.log(e))
+      },
+      async EditadoTipoCuenta(id) {
+        await axios.put( 'http://localhost:1337/api/tipo-cuentas/'+id,{
+        data: {
+          nombre_cuenta: this.nombre_cuenta
+        }
+      }).then( () => {
+        console.log("funciona bien tipo cuenta")
+        this.editar = false
+        this.VacioCampos();
+      })
+      .catch( e => console.log(e))
       },
       Delete(id){
         console.log(id)
         axios.delete( 'http://localhost:1337/api/clientes/'+id).then( () => {
+          console.log("Eliminado con exito")
+          this.DeleteCuenta(id);
+        })
+        .catch( e => console.log(e))
+      },
+      DeleteCuenta(id) {
+        axios.delete( 'http://localhost:1337/api/cliente-cuentas/'+id).then( () => {
+          console.log("Eliminado con exito")
+          this.DeleteTipoCuenta(id);
+        })
+        .catch( e => console.log(e))
+      },
+      DeleteTipoCuenta(id) {
+        axios.delete( 'http://localhost:1337/api/tipo-cuentas/'+id).then( () => {
           console.log("Eliminado con exito")
           location.reload();
         })
@@ -434,10 +476,8 @@
       this.rfc = null
       this.curp = null
       this.saldo_actual = null
-      this.fecha_contratacion = null
-      this.fecha_ultimo_movimiento = null
       this.nombre_cuenta = null
-      location.reload();
+      //location.reload();
     }
     },
     created() {

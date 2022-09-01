@@ -44,8 +44,61 @@
       </v-simple-table>
     </template>
     <template>
-      <v-dialog v-model="info" width="1000">
-
+      <v-dialog v-model="info" width="1200">
+        <v-card>  
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-icon>mdi-account</v-icon>
+            Informacion del usuario
+            <v-spacer></v-spacer>
+            <v-btn color="indigo darken-4" text @click="info = false"><v-icon>mdi-close</v-icon></v-btn>
+          </v-card-actions>
+          <v-divider></v-divider>
+          <v-container>
+            <template v-if="clientes">
+            <v-row v-for="(item,i) in clientes.data" :key="i">
+              <v-col cols="12" sm="6" md="4" class="text-center">
+                <label>Nombre: </label>
+                <label>{{ item.attributes.nombre }} {{item.attributes.apellido_paterno}} {{item.attributes.apellido_materno}}</label>
+              </v-col>
+              <v-col cols="12" sm="6" md="4" class="text-center">
+                <label>RFC: </label>
+                <label>{{ item.attributes.rfc }}</label>
+              </v-col>
+              <v-col cols="12" sm="6" md="4" class="text-center">
+                <label>curp: </label>
+                <label>{{ item.attributes.curp }}</label>
+              </v-col>
+            </v-row> 
+          </template>
+          <template v-if="cuenta">
+            <v-row v-for="(item,i) in cuenta.data" :key="i">
+              <v-col cols="12" sm="6" md="4" class="text-center">
+                <label>Saldo actual: </label>
+                <label>{{ item.attributes.saldo_actual }}</label>
+              </v-col>
+              <v-col cols="12" sm="6" md="4" class="text-center">
+                <label>Fecha de contratacion: </label>
+                <label>{{ item.attributes.fecha_contratacion }}</label>
+              </v-col>
+              <v-col cols="12" sm="6" md="4" class="text-center">
+                <label>Fecha de ultimo movimiento: </label>
+                <label>{{ item.attributes.fecha_ultimo_movimiento }}</label>
+              </v-col>
+            </v-row>    
+          </template>
+          <template v-if="tipoCuenta">
+            <v-row v-for="(item,i) in tipoCuenta.data" :key="i">
+              <v-spacer></v-spacer>
+              <v-col cols="12" sm="6" md="4" class="text-center">
+                <label>Tipo de cuenta: </label>
+                <label>{{ item.attributes.nombre_cuenta }}</label>
+              </v-col>
+              <v-spacer></v-spacer>
+            </v-row>
+          </template>
+          </v-container>
+        </v-card>
       </v-dialog>
     </template>
     <template>
@@ -96,7 +149,7 @@
         })
       },
       get_Cuenta(){
-        axios.get( 'http://localhost:1337/api/cliente-cuentas/:id' ).then( res => {
+        axios.get( 'http://localhost:1337/api/cliente-cuentas' ).then( res => {
           console.log(res.data)
           this.cuenta = res.data
         })
@@ -105,7 +158,7 @@
         })
       },
       get_TipoCuenta(){
-        axios.get( 'http://localhost:1337/api/tipo-cuentas/:id' ).then( res => {
+        axios.get( 'http://localhost:1337/api/tipo-cuentas' ).then( res => {
           console.log(res.data)
           this.tipoCuenta = res.data
         })
@@ -124,6 +177,8 @@
     },
     created() {
       this.get_Clientes();
+      this.get_Cuenta();
+      this.get_TipoCuenta();
     }
   }
 </script>
